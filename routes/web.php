@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\FileuploadController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,4 +20,17 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::get('/fileupload/create', [FileuploadController::class, 'create'])->name('create_fileupload_path');
+Route::get('/fileupload', [FileuploadController::class, 'index'])->name('fileupload_path');
+
+Route::group(['middleware' => 'auth'], function () {
+
+
+
+    Route::post('/fileupload', [FileuploadController::class, 'store'])->name('store_fileupload_path');
+    Route::post('/fileupload/download', [FileuploadController::class, 'download'])->name('download_fileupload_path');
+
+
+});

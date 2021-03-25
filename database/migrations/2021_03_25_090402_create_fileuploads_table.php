@@ -15,12 +15,16 @@ class CreateFileuploadsTable extends Migration
     {
         Schema::create('fileuploads', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 40);
+            $table->string('url', 80);
+            $table->integer('user_id');
+            $table->string('objid', 3)->default('obj');
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrations.2
      *
      * @return void
      */

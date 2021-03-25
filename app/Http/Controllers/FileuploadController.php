@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Fileupload;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FileuploadController extends Controller
 {
@@ -15,6 +16,16 @@ class FileuploadController extends Controller
     public function index()
     {
         //
+        $storage = Storage::disk('minio');
+       
+        $client = $storage->getAdapter()->getClient();
+        $command = $client->getCommand('ListObjects');
+        $command['Bucket'] = $storage->getAdapter()->getBucket();
+        //$command['Prefix'] = 'id' . $request->user()->id . '/';
+        $result = $client->execute($command);
+        //;$request->user()->id
+
+        return view('fileupload.index')->with(['results' => $result['Contents']]);
     }
 
     /**
@@ -22,9 +33,10 @@ class FileuploadController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
+        return view('fileupload.create');
     }
 
     /**
@@ -36,6 +48,22 @@ class FileuploadController extends Controller
     public function store(Request $request)
     {
         //
+        $imageNameArr = [];
+        foreach ($request->objectup as $file) {
+            //$file = $request->file('objectup');
+            $name=time().$file->getClientOriginalName();
+            $imageNameArr[] = $name;
+            //$filePath = '/' . 'id' . $request->user()->id. '/' . $name;
+            $filePath = '/' . $name;
+            Storage::disk('minio')->put($filePath, file_get_contents($file));
+
+            //$txtmsg= $name.' Upload!';
+        }
+        exec("/usr/bin/argo submit --watch -n argo  https://raw.githubusercontent.com/geoinca/miniok/main/argo/hello-world10.yaml        ", );
+    
+        session()->flash('message', $name.' Upload!');
+        //return redirect('/');
+        return redirect()->route('fileupload_path');
     }
 
     /**
