@@ -31,6 +31,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/fileupload', [FileuploadController::class, 'store'])->name('store_fileupload_path');
     Route::post('/fileupload/download', [FileuploadController::class, 'download'])->name('download_fileupload_path');
-
+    Route::post('/fileupload/process', [FileuploadController::class, 'process'])->name('process_fileupload_path');
 
 });

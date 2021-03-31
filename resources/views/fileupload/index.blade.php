@@ -13,7 +13,7 @@
                         <th scope="col">size</th>
                         <th scope="col">
                             @if (is_array($results) )
-                            <form action="{{ route('download_fileupload_path') }}" method="post">
+                            <form action="{{ route('process_fileupload_path') }}" method="post">
                              {{ csrf_field() }}
                              <button type="submit" class='btn btn-danger'>Procesar</button>
                             </form>
