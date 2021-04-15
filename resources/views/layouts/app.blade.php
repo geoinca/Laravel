@@ -33,7 +33,8 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        <li><a href="{{ route('fileupload_path') }}">home Upload</a></li>
+                        <li><a href="{{ route('create_fileupload_path') }}">Upload File</a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
