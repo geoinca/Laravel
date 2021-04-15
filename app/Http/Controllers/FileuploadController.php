@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fileupload;
+use App\Models\Process;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+ 
 
 class FileuploadController extends Controller
 {
@@ -16,6 +16,11 @@ class FileuploadController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         //
@@ -52,20 +57,34 @@ class FileuploadController extends Controller
     {
         //
         $imageNameArr = [];
+        
+        $process  = new Process;
+        $process->url= 'url';
+        $process->user_id = $request->user()->id;
+        $process->save();
+        $processid = $process->id;
         foreach ($request->objectup as $file) {
             //$file = $request->file('objectup');
-            $name=time().$file->getClientOriginalName();
+            $prename='ID'.$request->user()->id.':'.$processid.'P'.time();
+            $name=$prename.$file->getClientOriginalName();
             $imageNameArr[] = $name;
             //$filePath = '/' . 'id' . $request->user()->id. '/' . $name;
             $filePath = '/' . $name;
             Storage::disk('minio')->put($filePath, file_get_contents($file));
 
             //$txtmsg= $name.' Upload!';
+            $fileupload  = new Fileupload;
+            $fileupload->user_id = $request->user()->id;
+            $fileupload->name = $name;
+            $fileupload->url = 'url';
+            $fileupload->process_id =$processid;
+            $fileupload->save();
+
         }
         
         //var_dump($imageNameArr) "{\"message\":\"this is my first webhook\"}"
         $url = 'http://webhook-eventsource-svc.argo-events:12000/example4';
-        $post=['message'=>'this is my first webhook'];
+        $post=['filaname'=>$prename];
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -95,9 +114,9 @@ class FileuploadController extends Controller
         } else {
             print_r(json_decode($response));
         }
-           dd($response);
+           //dd($response);
     
-        session()->flash('message', $responsex.' Upload!');
+        session()->flash('message', $name.' Upload!');
         //return redirect('/');
         return redirect()->route('fileupload_path');
     }
@@ -151,14 +170,42 @@ class FileuploadController extends Controller
         //
         //exec("/usr/bin/argo submit --watch -n argo  https://raw.githubusercontent.com/geoinca/miniok/main/argo/hello-world10.yaml", );
 
-        $process = new Process(['yaml/yaml.sh']);
-        $process->run();
+        //var_dump($imageNameArr) "{\"message\":\"this is my first webhook\"}"
+        $url = 'http://webhook-eventsource-svc.argo-events:12000/example4';
+        $post=['filaname'=>'this is my first webhook'];
+        $curl = curl_init();
 
-        // executes after the command finishes
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30000,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => json_encode($post),
+            CURLOPT_HTTPHEADER => array(
+                // Set here requred headers
+                "accept: */*",
+                "accept-language: en-US,en;q=0.8",
+                "content-type: application/json",
+            ),
+        ));
+        
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        
+        curl_close($curl);
+        
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            print_r(json_decode($response));
         }
-
-        echo $process->getOutput();
+           dd($response);
+    
+        session()->flash('message', $responsex.' Upload!');
+        //return redirect('/');
+        return redirect()->route('fileupload_path');
     }
 }

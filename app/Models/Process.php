@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Fileupload extends Model
+class Process extends Model
 {
     use HasFactory;
         //
@@ -24,7 +24,7 @@ class Fileupload extends Model
         }
 
         protected $fillable = [
-            'user_id','name', 'url'
+            'user_id', 'url'
         ]; 
         
 }
