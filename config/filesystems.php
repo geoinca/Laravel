@@ -71,7 +71,15 @@ return [
             'region' => env('MINIO_DEFAULT_REGION'),
             'bucket' => env('MINIO_BUCKET'),
             'endpoint' => env('MINIO_ENDPOINT')
-        ],        
+        ], 
+        'minioout' => [
+            'driver' => 'minio',
+            'key' => env('MINIO_ACCESS_KEY'),
+            'secret' => env('MINIO_SECRET_KEY'),
+            'region' => env('MINIO_DEFAULT_REGION'),
+            'bucket' => env('MINIO_BUCKET_OUT'),
+            'endpoint' => env('MINIO_ENDPOINT')
+        ],         
 
     ],
 

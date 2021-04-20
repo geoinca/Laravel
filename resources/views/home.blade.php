@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+h:b
+<img src="{{ route('jobImage', 'ID1-32P1618737661emily.jpg') }}" alt="job image" title="job image">
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
