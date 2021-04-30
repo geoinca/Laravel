@@ -11,6 +11,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">size</th>
+                        <th scope="col">Nameenc</th>
                         <th scope="col">
                             @if (is_array($results) )
                             <form action="{{ route('process_fileupload_path') }}" method="post">
@@ -27,7 +28,8 @@
                         <tr>
                             <th scope="row">     {{ $id }}    </th>
                             <td>{{ $value["Key"] }}</td>
-                            <td>{{ $value["Size"] }}</td>
+                            <td>{{ $value["Size"] }}</td>KeyEnco
+                            <td><img src="{{ route('jobImage',$value['KeyEnco'] ) }}" alt="job image" title="job image" height="300px"></td>
                             <td>
                                 <form action="{{ route('download_fileupload_path') }}" method="post">
                                     <input type="hidden"  id="filename" name="filename" value='{{ $value["Key"] }}'>
